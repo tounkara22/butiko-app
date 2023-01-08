@@ -3,6 +3,7 @@ const local = {
   loginUrl: "/auth/login",
   activateUrl: "/auth/activate",
   signupUrl: "/auth/signup",
+  fetchUserUrl: "/user",
   fetchAllClients: "/clients/all",
   addNewClient: "/clients/new",
   getClientOverviewUrl: "/clients/overview",

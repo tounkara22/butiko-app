@@ -1,17 +1,10 @@
-import {
-  Button,
-  Menu,
-  MenuItem,
-  Avatar,
-  ListItemIcon,
-  Divider,
-} from "@mui/material";
+import { Button, MenuItem, Avatar, ListItemIcon, Divider } from "@mui/material";
 import { useState } from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import {
   MenuSelectItems,
   MenuItemProps,
-} from "../../components/layout/drawers/main-drawer/main-drawer.types";
+} from "../../components/layout/navigation/components/main-drawer.types";
 import MenuDropdown from "./menu-dropdown";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";

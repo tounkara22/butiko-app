@@ -1,3 +1,4 @@
+import { IUserResponse } from "../../types/responses/user";
 import { apiHelper } from "../apiHelper/apiHelper";
 import { ResponseType } from "../apiHelperWithCache/apiHelperWithCache";
 import { ApiMethod } from "../clients/type";
@@ -8,7 +9,7 @@ const { loginUrl, signupUrl, activateUrl } = endpoints;
 
 export const postLogin: (
   payload: LoginPayload
-) => Promise<ResponseType<any>> = async (payload) => {
+) => Promise<ResponseType<IUserResponse>> = async (payload) => {
   return apiHelper(loginUrl, ApiMethod.POST, payload);
 };
 

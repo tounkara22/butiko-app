@@ -18,10 +18,13 @@ export default NextAuth({
 
         try {
           const response = await postLogin({ email, password });
-          if (response?.data != null && !response?.data?.error) {
+          if (response?.data != null) {
+            const { email, firstName, lastName, token, userId } = response.data;
             return {
-              email: email,
-              id: response.data.userId,
+              email,
+              id: userId,
+              image: token, // we are repurposing this property to store token
+              name: userId, // re-purpose for user id
             };
           }
         } catch (e) {
@@ -32,7 +35,10 @@ export default NextAuth({
     }),
   ],
   callbacks: {
-    jwt({ token }) {
+    jwt({ token, user }) {
+      if (user?.id) {
+        token.sub = user.id;
+      }
       return token;
     },
   },

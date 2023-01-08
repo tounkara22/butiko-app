@@ -17,6 +17,7 @@ export const endpoints = {
   loginUrl: `${env.baseUrl}${env.loginUrl}`,
   signupUrl: `${env.baseUrl}${env.signupUrl}`,
   activateUrl: `${env.baseUrl}${env.activateUrl}`,
+  fetchUserUrl: `${env.baseUrl}${env.fetchUserUrl}`,
   fetchAllClients: `${env.baseUrl}${env.fetchAllClients}`,
   addNewClient: `${env.baseUrl}${env.addNewClient}`,
   getClientOverviewUrl: `${env.baseUrl}${env.getClientOverviewUrl}`,

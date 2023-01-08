@@ -13,6 +13,12 @@
   "all.errors.USER_ALREADY_VERIFIED": "Account could not be activated because the link is incorrect",
   "all.errors.isRequired": "Required field",
 
+  "appDrawer.profile.personal": "Personal account",
+  "appDrawer.profile.addBusiness": "New business",
+  "appDrawer.profile.profile": "Profile",
+  "appDrawer.profile.settings": "Settings",
+  "appDrawer.profile.logout": "Logout",
+
   "page.login.header.title": "Login portal",
   "page.login.header.nextLink": "Sign Up",
   "page.login.button": "Login",

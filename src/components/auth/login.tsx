@@ -51,6 +51,7 @@ export default function LoginView() {
           getSnackbarOptions({ variant: "error", duration: 2000 })
         );
       } else {
+        // when we load, check the last profile
         router.replace("/");
       }
     } catch (error) {

@@ -1,21 +1,32 @@
 import { ResponseType } from "../apiHelperWithCache/apiHelperWithCache";
-import axios, { AxiosError } from "axios";
-import { defaultConfig } from "next/dist/server/config-shared";
+import axios from "axios";
+import { getSession } from "next-auth/react";
 
-const createConfig = () => ({
-  headers: {
-    Accept: "application/json",
-  },
-});
+const createConfig = async () => {
+  const session = await getSession();
+  if (session) {
+    return {
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${session.user?.image}`,
+      },
+    };
+  }
+  return {
+    headers: {
+      Accept: "application/json",
+    },
+  };
+};
 
 export const apiHelper = async <T = any, U = any>(
   url: string,
   method: string,
   data = {},
-  redirectOnError = true,
   config = {}
 ): Promise<ResponseType<T | U>> => {
-  const defaultConfig = createConfig();
+  const defaultConfig = await createConfig();
+
   const params =
     method === "GET"
       ? { method, ...defaultConfig, ...config }
