@@ -1,6 +1,5 @@
-import { CircularProgress } from "@mui/material";
 import { GetServerSideProps } from "next";
-import { getSession, signOut, useSession } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { UserVar } from "../src/apollo-client/globalVars";
@@ -13,40 +12,35 @@ export default function HomePage() {
     getSession().then((session) => {
       if (session) {
         const userid = session?.user?.name as string;
+        let currentProfileId = localStorage?.getItem("current-profile");
 
         postUser(userid)
-          // get the user profile attached with the userid
-          // save in the state and update the current-profile
           .then((response) => {
+            console.log(currentProfileId);
+            const userObj = response?.data;
+            if (!userObj) {
+              signOut({ callbackUrl: "/login" });
+            }
+
             const { businesses, email, firstName, lastName, userId } =
-              response.data;
-            let currentProfileId = localStorage?.getItem("current-profile");
+              response?.data;
             if (
               !currentProfileId ||
               currentProfileId === "undefined" ||
               currentProfileId === null
             ) {
-              localStorage.setItem("current-profile", "PERSONAL");
+              currentProfileId = "PERSONAL";
+              localStorage.setItem("current-profile", currentProfileId);
             }
 
             UserVar({
-              email: "eejej@ejje.com",
-              businesses: [],
-              firstName: "djdd",
-              id: "ddjjd",
-              lastName: "dhdh",
+              email,
+              businesses,
+              firstName,
+              id: userId,
+              lastName,
+              currentProfile: currentProfileId,
             });
-            // UserVar({
-            //   businesses,
-            //   email,
-            //   firstName,
-            //   id: userId,
-            //   lastName,
-            //   currentProfile: localStorage
-            //     ?.getItem("current-profile")
-            //     ?.toString(),
-            // });
-            // console.log("check", UserVar());
           })
           .catch((e) => {
             signOut({

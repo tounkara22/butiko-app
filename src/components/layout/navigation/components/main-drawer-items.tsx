@@ -1,4 +1,11 @@
-import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import {
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useRouter } from "next/router";
 import { StyledListItem } from "./main-drawer.styles";
 import { DrawerItem } from "./main-drawer.types";
@@ -22,8 +29,10 @@ export const MainDrawerItems = ({ drawerList }: IDrawerList) => {
             disablePadding
           >
             <ListItemButton onClick={() => router.push(route)}>
-              <ListItemText>{customIcon}</ListItemText>
-              <ListItemText primary={title} />
+              <Stack direction={"row"} spacing="20px">
+                {customIcon}
+                <Typography>{title}</Typography>
+              </Stack>
             </ListItemButton>
           </StyledListItem>
         );

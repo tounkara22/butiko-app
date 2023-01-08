@@ -1,6 +1,6 @@
-import { LoginForm } from "../types/auth";
+import { ILoginVar } from "../types/auth";
 
-export const loginInit: LoginForm = {
+export const loginInit: ILoginVar = {
   email: {
     value: "",
     isValid: false,

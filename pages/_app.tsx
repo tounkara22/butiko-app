@@ -8,20 +8,13 @@ import { SnackbarProvider } from "notistack";
 import { getSession, SessionProvider, useSession } from "next-auth/react";
 import { GetServerSideProps } from "next";
 import Layout from "../src/components/layout/layout";
-import { useEffect } from "react";
 
 interface IAppHelper {
   children: JSX.Element | JSX.Element[];
 }
 
 function AppHelper({ children }: IAppHelper) {
-  // when the user is not logged in, we ensure that they are not seeing the Layout.
-  // This way, sign in and sign up take the full screen.
-  const { status, data: session } = useSession();
-  useEffect(() => {
-    // when we load, check the last profile
-    console.log("can we", localStorage.getItem("nextauth.message"));
-  }, []);
+  const { status } = useSession();
   return (
     <>
       {status === "authenticated" ? (

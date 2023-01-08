@@ -1,5 +1,5 @@
 export interface IBusiness {
-  id: string;
+  _id: string;
   name: string;
 }
 
