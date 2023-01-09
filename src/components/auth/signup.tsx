@@ -43,7 +43,6 @@ export default function SignupView() {
           <div style={{ width: "600px" }}>
             {copy["page.signup.snackbar.success"]}
           </div>,
-          //   <div>{copy["page.signup.snackbar.success"]}</div>,
           {
             variant: "success",
             autoHideDuration: 4000,

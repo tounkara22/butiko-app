@@ -22,7 +22,6 @@ function Clients() {
     getClients().then((response) => {
       setLoading(false);
       if (response?.data) {
-        console.log(response?.data);
         clientsVar({
           allClients: Object.values(response.data),
         });

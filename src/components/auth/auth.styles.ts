@@ -48,3 +48,9 @@ export const StyledTextfield = styled(TextField)({
     marginLeft: "0",
   },
 });
+
+export const CenteredDiv = styled.div({
+  width: "100%",
+  display: "flex",
+  justifyContent: "center",
+});
