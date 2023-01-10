@@ -35,3 +35,43 @@ export const validateMinLength = ({
 }: IValidatorRule) => {
   return (value as string).length >= (minLength as number);
 };
+
+export const validateDateLessThan = ({
+  args: maxNumYears,
+  value,
+}: IValidatorRule) => {
+  const currDate = new Date();
+  const maxYear = currDate.getFullYear() - parseInt(maxNumYears as string);
+  const maxDate = new Date(maxYear, currDate.getMonth(), currDate.getDate());
+  const targetDate = new Date(value as string);
+  return targetDate >= maxDate;
+};
+
+export const validateDateBiggerThan = ({
+  args: minNumYears,
+  value,
+}: IValidatorRule) => {
+  const currDate = new Date();
+  const minYear = currDate.getFullYear() - parseInt(minNumYears as string);
+  const minDate = new Date(minYear, currDate.getMonth(), currDate.getDate());
+  const targetDate = new Date(value as string);
+  return targetDate <= minDate;
+};
+
+export const validateDateBetweenRange = ({
+  args: rangeString,
+  value,
+}: IValidatorRule) => {
+  const [minNumYears, maxNumYears] = (rangeString as string)?.split("-");
+  const currDate = new Date();
+  // get min date
+  const minYear = currDate.getFullYear() - parseInt(maxNumYears);
+  const minDate = new Date(minYear, currDate.getMonth(), currDate.getDate());
+  // get max date
+  const maxYear = currDate.getFullYear() - parseInt(minNumYears);
+  const maxDate = new Date(maxYear, currDate.getMonth(), currDate.getDate());
+  // get date that user entered
+  const targetDate = new Date(value as string);
+  // true when entered date is comprised in range
+  return targetDate >= minDate && targetDate <= maxDate;
+};

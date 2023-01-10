@@ -1,6 +1,6 @@
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
-import SignupView from "../src/components/auth/signup";
+import SignupView from "../src/components/auth/views/signup-view";
 
 export default function SignupPage() {
   return <SignupView />;

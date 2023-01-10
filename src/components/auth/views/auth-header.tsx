@@ -1,13 +1,9 @@
 import { Stack, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import React from "react";
-import useCopy from "../../hooks/useCopy";
-import ActionButton from "../../views/buttons/action-button";
-import {
-  StyledHeaderContainer,
-  StyledLogoDiv,
-  StyledToolbar,
-} from "./auth.styles";
+import useCopy from "../../../hooks/useCopy";
+import ActionButton from "../../../views/buttons/action-button";
+import { StyledHeaderContainer, StyledLogoDiv, StyledToolbar } from "../styles";
 
 interface IAuthHeader {
   nextLink?: "/login" | "/signup";

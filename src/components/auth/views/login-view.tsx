@@ -3,23 +3,20 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
-import { getSnackbarOptions } from "../../../utils/snackbar";
-import useCopy from "../../hooks/useCopy";
-import ActionButton from "../../views/buttons/action-button";
-import {
-  StyledStack,
-  StyledFormContainer,
-  StyledTextfield,
-} from "./auth.styles";
-import AuthHeader from "./header";
+import { getSnackbarOptions } from "../../../../utils/snackbar";
+import useCopy from "../../../hooks/useCopy";
+import ActionButton from "../../../views/buttons/action-button";
+import { StyledStack, StyledFormContainer, StyledTextfield } from "../styles";
+import AuthHeader from "./auth-header";
 import { signIn } from "next-auth/react";
 import { useReactiveVar } from "@apollo/client";
-import { LoginVar } from "../../apollo-client/globalVars";
-import { loginChangeHandler } from "./auth.utils";
-import { validateAllFields } from "../../validation/utils";
-import { LoginValidations } from "./auth.validation";
-import { loginInit } from "../../apollo-client/initialValues/auth";
-import { navigationConstants as constants } from "../../../constants/navigation";
+import { loginVar } from "../../../apollo-client/globalVars";
+import { authChangeHandler } from "../utils";
+import { validateAllFields } from "../../../validation/utils";
+import { loginValidations } from "../validation";
+import { loginInit } from "../../../apollo-client/initialValues/auth";
+import { navigationConstants as constants } from "../../../../constants/navigation";
+import { LoginFormField } from "../types";
 
 export default function LoginView() {
   const router = useRouter();
@@ -27,20 +24,20 @@ export default function LoginView() {
   const { enqueueSnackbar } = useSnackbar();
   const { copy } = useCopy();
   const [loading, setLoading] = useState(false);
-  const { email, password } = useReactiveVar(LoginVar);
+  const { email, password } = useReactiveVar(loginVar);
   const [checked, setChecked] = useState(true);
 
   useEffect(() => {
     const onRouteChangeComplete = () => {
       if (checked) localStorage.setItem(constants.REMEMBER_ME, email.value);
-      LoginVar(loginInit);
+      loginVar(loginInit);
     };
 
     const rememberedEmail = localStorage.getItem(constants.REMEMBER_ME);
     if (rememberedEmail != null) {
-      LoginVar({
-        ...LoginVar(),
-        email: { ...LoginVar().email, value: rememberedEmail.toString() },
+      loginVar({
+        ...loginVar(),
+        email: { ...loginVar().email, value: rememberedEmail.toString() },
       });
     } else {
       setChecked(false);
@@ -58,7 +55,7 @@ export default function LoginView() {
   ) => {
     e.preventDefault();
     setLoading(true);
-    if (!validateAllFields(["email", "password"], LoginVar, LoginValidations)) {
+    if (!validateAllFields(["email", "password"], loginVar, loginValidations)) {
       setLoading(false);
       return;
     }
@@ -77,7 +74,6 @@ export default function LoginView() {
           getSnackbarOptions({ variant: "error", duration: 2000 })
         );
       } else {
-        // when we load, check the last profile
         router.replace("/");
       }
     } catch (error) {
@@ -87,25 +83,27 @@ export default function LoginView() {
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-    fieldName: "email" | "password"
+    fieldName: LoginFormField
   ) => {
-    loginChangeHandler({
-      model: LoginVar,
+    authChangeHandler({
+      model: loginVar,
       fieldName,
       value: e.target.value || "",
       validate: false,
+      validationObject: loginValidations,
     });
   };
 
   const handleInputBlur = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-    fieldName: "email" | "password"
+    fieldName: LoginFormField
   ) => {
-    loginChangeHandler({
-      model: LoginVar,
+    authChangeHandler({
+      model: loginVar,
       fieldName,
       value: e.target.value || "",
       validate: true,
+      validationObject: loginValidations,
     });
   };
 

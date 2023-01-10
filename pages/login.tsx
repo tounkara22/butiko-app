@@ -1,6 +1,6 @@
 import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
-import LoginView from "../src/components/auth/login";
+import LoginView from "../src/components/auth/views/login-view";
 
 export default function LoginPage() {
   return <LoginView />;

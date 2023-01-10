@@ -1,14 +1,21 @@
-import { ILoginVar } from "../types/auth";
+import { ILoginVar, ISignupVar } from "../types/auth";
+
+const textFieldInit = {
+  value: "",
+  isValid: false,
+  error: "",
+};
 
 export const loginInit: ILoginVar = {
-  email: {
-    value: "",
-    isValid: false,
-    error: "",
-  },
-  password: {
-    value: "",
-    isValid: false,
-    error: "",
-  },
+  email: textFieldInit,
+  password: textFieldInit,
+};
+
+export const signupInit: ISignupVar = {
+  firstName: textFieldInit,
+  lastName: textFieldInit,
+  email: textFieldInit,
+  password: textFieldInit,
+  passwordConfirm: textFieldInit,
+  dob: textFieldInit,
 };

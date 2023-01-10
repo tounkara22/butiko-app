@@ -2,17 +2,17 @@ import { EventHandlerProps } from "../../validation/types";
 import { validateField } from "../../validation/utils";
 import { getModelFieldValue, updateDataModel } from "../../validation/utils";
 import { IValidatorResult } from "../../validation/types";
-import { LoginValidations } from "./auth.validation";
 
-export const loginChangeHandler = ({
+export const authChangeHandler = ({
   model,
   fieldName,
   value: fieldValue,
   validate = true,
   regex,
+  validationObject, // made any on purpose
 }: EventHandlerProps): IValidatorResult | void => {
   let value = fieldValue;
-  const name = fieldName as "email" | "password";
+  const name = fieldName;
   const currentValue = model()[name].value;
 
   if (regex) {
@@ -45,7 +45,12 @@ export const loginChangeHandler = ({
     });
   }
 
-  if (validate && LoginValidations[name]) {
-    return validateField(name, model, LoginValidations[name].validators);
+  if (validate && validationObject[name]) {
+    const isValid = validateField(
+      name,
+      model,
+      validationObject[name].validators
+    );
+    return isValid;
   }
 };

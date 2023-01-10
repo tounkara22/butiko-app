@@ -11,6 +11,7 @@
   "all.errors.PASSWORD_INVALID": "Invalid password. Please provide a valid password.",
   "all.errors.EMAIL_NOT_FOUND": "There is no account on file for this email address.",
   "all.errors.USER_ALREADY_VERIFIED": "Account could not be activated because the link is incorrect",
+  "all.errors.USER_ALREADY_EXIST": "This email is already registered",
   "all.errors.isRequired": "Required field",
 
   "appDrawer.profile.personal": "Personal account",
@@ -34,12 +35,15 @@
   "page.login.snackbar.error": "Login was unsuccessful. Please try again.",
 
   "page.signup.header.title": "Create a new account",
+  "page.signup.header.required.error": "Field is required",
   "page.signup.snackbar.success": "Signup successful. Please verify you email by opening the link sent to your email.",
   "page.signup.header.nextLink": "Login",
   "page.signup.button": "Sign Up",
   "page.signup.form.textfield.firstName": "First name",
   "page.signup.form.textfield.lastName": "Last name",
   "page.signup.form.textfield.dob": "Date of birth",
+  "page.signup.form.textfield.dob.tooBig": "Age limit is 100 years old",
+  "page.signup.form.textfield.dob.tooSmall": "User must be at least 18 years old",
   "page.signup.form.textfield.email": "Email",
   "page.signup.form.textfield.password": "Password",
   "page.signup.form.textfield.password.placeholder": "Password must be at least 8 characters long",

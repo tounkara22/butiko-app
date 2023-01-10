@@ -1,4 +1,4 @@
-import { IUserResponse } from "../../types/responses/user";
+import { IUserResponse } from "../../types/api-responses/user";
 import { apiHelper } from "../apiHelper/apiHelper";
 import { ResponseType } from "../apiHelperWithCache/apiHelperWithCache";
 import { ApiMethod } from "../clients/type";
