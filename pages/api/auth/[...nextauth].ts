@@ -28,7 +28,7 @@ export default NextAuth({
             };
           }
         } catch (e) {
-          throw e;
+          throw new Error(e as string);
         }
         return null;
       },

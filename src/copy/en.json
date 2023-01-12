@@ -7,11 +7,12 @@
 
   "all.errors.generic": "Operation failed. Please re-try or contact our support team",
   "all.errors.EMAIL_INVALID": "This email is invalid",
-  "all.errors.PASSWORD_INCORRECT": "Incorrect email and/or password",
-  "all.errors.PASSWORD_INVALID": "Invalid password. Please provide a valid password.",
-  "all.errors.EMAIL_NOT_FOUND": "There is no account on file for this email address.",
+  "all.errors.PASSWORD_INCORRECT": "Incorrect password",
+  "all.errors.EMAIL_NOT_FOUND": "No account on file with this email",
   "all.errors.USER_ALREADY_VERIFIED": "Account could not be activated because the link is incorrect",
-  "all.errors.USER_ALREADY_EXIST": "This email is already registered",
+  "all.errors.USER_CANNOT_BE_VERIFIED": "Account activation is not possible. Either the link is broken or the account was verified",
+  "all.errors.USER_ALREADY_EXIST": "An account already exist with this email",
+
   "all.errors.isRequired": "Required field",
 
   "appDrawer.profile.personal": "Personal account",
@@ -19,6 +20,9 @@
   "appDrawer.profile.profile": "Profile",
   "appDrawer.profile.settings": "Settings",
   "appDrawer.profile.logout": "Logout",
+
+  "page.auth.common.error.password.length": "Password must be a min. of 8 characters",
+  "page.auth.common.error.password.match": "Passwords must match",
 
   "page.login.header.title": "Login portal",
   "page.login.header.nextLink": "Sign Up",
@@ -29,14 +33,13 @@
   "page.login.form.textfield.email.error.invalid": "Email address is invalid",
   "page.login.form.textfield.password": "Password",
   "page.login.form.textfield.password.error.required": "Password is a required field",
-  "page.login.form.textfield.password.error.invalid": "Password must be a min. of 8 characters",
   "page.login.form.checkbox.rememberMe": "Remember me?",
   "page.login.snackbar.success": "Login successful. Redirecting...",
   "page.login.snackbar.error": "Login was unsuccessful. Please try again.",
 
   "page.signup.header.title": "Create a new account",
   "page.signup.header.required.error": "Field is required",
-  "page.signup.snackbar.success": "Signup successful. Please verify you email by opening the link sent to your email.",
+  "page.signup.snackbar.success": "Successful. A verification was sent to your email",
   "page.signup.header.nextLink": "Login",
   "page.signup.button": "Sign Up",
   "page.signup.form.textfield.firstName": "First name",

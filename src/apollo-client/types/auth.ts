@@ -1,4 +1,4 @@
-import { ICommonDateField, ICommonTextField } from "./common";
+import { ICommonTextField } from "./common";
 
 export interface ILoginVar {
   email: ICommonTextField;

@@ -1,4 +1,4 @@
-import { Checkbox, Divider, FormControlLabel } from "@mui/material";
+import { Checkbox, Divider, FormControlLabel, IconButton, InputAdornment } from "@mui/material";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
@@ -17,6 +17,8 @@ import { loginValidations } from "../validation";
 import { loginInit } from "../../../apollo-client/initialValues/auth";
 import { navigationConstants as constants } from "../../../../constants/navigation";
 import { LoginFormField } from "../types";
+import HideAndShowButton from "../../../views/buttons/hide-show-button";
+import { authErrors } from "../../../../constants/auth";
 
 export default function LoginView() {
   const router = useRouter();
@@ -25,22 +27,22 @@ export default function LoginView() {
   const { copy } = useCopy();
   const [loading, setLoading] = useState(false);
   const { email, password } = useReactiveVar(loginVar);
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(false);
+  const [isPasswordVisible, setPasswordVisible] = useState(false);
 
   useEffect(() => {
     const onRouteChangeComplete = () => {
-      if (checked) localStorage.setItem(constants.REMEMBER_ME, email.value);
+      if (checked && email.value) localStorage.setItem(constants.REMEMBER_ME, email.value);
       loginVar(loginInit);
     };
 
     const rememberedEmail = localStorage.getItem(constants.REMEMBER_ME);
-    if (rememberedEmail != null) {
+    if (rememberedEmail != null && rememberedEmail !== "") {
       loginVar({
         ...loginVar(),
         email: { ...loginVar().email, value: rememberedEmail.toString() },
       });
-    } else {
-      setChecked(false);
+      setChecked(true);
     }
 
     router.events.on("routeChangeComplete", onRouteChangeComplete);
@@ -50,9 +52,7 @@ export default function LoginView() {
     };
   }, []);
 
-  const handleSubmit = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     setLoading(true);
     if (!validateAllFields(["email", "password"], loginVar, loginValidations)) {
@@ -65,12 +65,11 @@ export default function LoginView() {
         email: email.value,
         password: password.value,
       });
-
       // login failed
       if (result?.error != null) {
         setLoading(false);
         enqueueSnackbar(
-          copy[`all.errors.${result.error || "generic"}`],
+          copy[authErrors[result.error || "GENERIC"]],
           getSnackbarOptions({ variant: "error", duration: 2000 })
         );
       } else {
@@ -94,10 +93,7 @@ export default function LoginView() {
     });
   };
 
-  const handleInputBlur = (
-    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-    fieldName: LoginFormField
-  ) => {
+  const handleInputBlur = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>, fieldName: LoginFormField) => {
     authChangeHandler({
       model: loginVar,
       fieldName,
@@ -107,14 +103,19 @@ export default function LoginView() {
     });
   };
 
-  const handleCheckboxChanged = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  /**
+   * If flag is checked and there is an email typed, store the value
+   */
+  const handleCheckboxChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     const isChecked = event.target.checked;
     if (!isChecked) {
       localStorage.removeItem(constants.REMEMBER_ME);
     } else {
-      localStorage.setItem(constants.REMEMBER_ME, email.value);
+      if (email.value && email.value.length) {
+        localStorage.setItem(constants.REMEMBER_ME, email.value);
+      } else {
+        localStorage.removeItem(constants.REMEMBER_ME);
+      }
     }
     setChecked(event.target.checked);
   };
@@ -140,24 +141,28 @@ export default function LoginView() {
           <StyledTextfield
             required
             label={copy["page.login.form.textfield.password"]}
-            type="password"
+            type={isPasswordVisible ? "text" : "password"}
             value={password.value}
             error={password.error.length ? true : false}
             helperText={copy[password.error]}
             onBlur={(e) => handleInputBlur(e, "password")}
             onChange={(e) => handleInputChange(e, "password")}
+            InputProps={{
+              endAdornment: (
+                <HideAndShowButton
+                  setIsVisible={(isVisible) => setPasswordVisible(isVisible)}
+                  isVisible={isPasswordVisible}
+                />
+              ),
+            }}
           />
           <FormControlLabel
-            control={
-              <Checkbox checked={checked} onChange={handleCheckboxChanged} />
-            }
+            control={<Checkbox checked={checked} onChange={handleCheckboxChanged} />}
             label={copy["page.login.form.checkbox.rememberMe"]}
           />
           <Divider />
           <ActionButton onClick={handleSubmit}>
-            {loading
-              ? copy["page.login.button.loading"]
-              : copy["page.login.button"]}
+            {loading ? copy["page.login.button.loading"] : copy["page.login.button"]}
           </ActionButton>
           {/* <CenteredDiv>
             <a href="/">Reset password</a>

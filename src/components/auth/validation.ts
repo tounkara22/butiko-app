@@ -1,7 +1,11 @@
+import { emailRegex } from "../../../utils/reg-exp";
+import { signupVar } from "../../apollo-client/globalVars";
+import { IValidator } from "../../validation/types";
 import {
   validateDateBetweenRange,
   validateDateBiggerThan,
   validateDateLessThan,
+  validateEqualValues,
   validateMinLength,
   validateRegex,
   validateRequired,
@@ -18,8 +22,7 @@ export const loginValidations: ILoginValidation = {
       {
         rule: validateRegex,
         error: "page.login.form.textfield.email.error.invalid",
-        regExp:
-          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        regExp: emailRegex,
       },
     ],
   },
@@ -31,7 +34,7 @@ export const loginValidations: ILoginValidation = {
       },
       {
         rule: validateMinLength,
-        error: "page.login.form.textfield.password.error.invalid",
+        error: "page.auth.common.error.password.length",
         args: 8,
       },
     ],
@@ -56,24 +59,16 @@ export const signupValidations: ISignupValidation = {
       {
         rule: validateDateLessThan,
         error: "page.signup.form.textfield.dob.tooBig",
-        args: "100",
+        args: 100,
       },
       {
         rule: validateDateBiggerThan,
         error: "page.signup.form.textfield.dob.tooSmall",
-        args: "18",
+        args: 18,
       },
     ],
   },
   lastName: {
-    validators: [
-      {
-        rule: validateRequired,
-        error: "page.signup.header.required.error",
-      },
-    ],
-  },
-  passwordConfirm: {
     validators: [
       {
         rule: validateRequired,
@@ -90,8 +85,7 @@ export const signupValidations: ISignupValidation = {
       {
         rule: validateRegex,
         error: "page.login.form.textfield.email.error.invalid",
-        regExp:
-          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        regExp: emailRegex,
       },
     ],
   },
@@ -100,6 +94,50 @@ export const signupValidations: ISignupValidation = {
       {
         rule: validateRequired,
         error: "page.signup.header.required.error",
+      },
+      {
+        rule: validateMinLength,
+        error: "page.auth.common.error.password.length",
+        args: 8,
+      },
+    ],
+  },
+  passwordConfirm: {
+    validators: [
+      {
+        rule: validateRequired,
+        error: "page.signup.header.required.error",
+      },
+      {
+        rule: validateMinLength,
+        error: "page.auth.common.error.password.length",
+        args: 8,
+      },
+    ],
+  },
+};
+
+export const equalPasswordsValidation: IValidator = {
+  rule: validateEqualValues,
+  error: "page.auth.common.error.password.match",
+};
+
+export const passwordMatchValidation = {
+  password: {
+    validators: [
+      {
+        rule: validateEqualValues,
+        error: "page.auth.common.error.password.match",
+        args: "passwordConfirm.signup",
+      },
+    ],
+  },
+  passwordConfirm: {
+    validators: [
+      {
+        rule: validateEqualValues,
+        error: "page.auth.common.error.password.match",
+        args: "password.signup",
       },
     ],
   },

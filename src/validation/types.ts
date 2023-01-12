@@ -32,7 +32,7 @@ export interface IValidator {
  */
 export interface IValidatedField {
   validators: IValidator[];
-  fieldDependentValidators?: IValidator[];
+  fieldDependentValidators?: { validators: IValidator[] };
 }
 
 /**
@@ -45,6 +45,7 @@ export interface EventHandlerProps {
   validate?: boolean;
   regex?: RegExp;
   validationObject: any;
+  dependent?: string;
 }
 
 /**

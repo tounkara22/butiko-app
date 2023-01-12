@@ -2,19 +2,22 @@ import { useReactiveVar } from "@apollo/client";
 import { CircularProgress, Divider, Stack } from "@mui/material";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useSnackbar } from "notistack";
-import { useState } from "react";
-import { AuthErrors } from "../../../../constants/auth-errors";
+import { useSnackbar, VariantType } from "notistack";
+import { useEffect, useState } from "react";
+import { authErrors, authSuccess, passwordFieldNames, signupFieldNames } from "../../../../constants/auth";
 import { getSnackbarOptions } from "../../../../utils/snackbar";
 import { signupVar } from "../../../apollo-client/globalVars";
+import { signupInit } from "../../../apollo-client/initialValues/auth";
 import useCopy from "../../../hooks/useCopy";
 import { postSignup } from "../../../services/auth/auth";
 import { SignupPayload } from "../../../services/auth/type";
+import { validateAllFields } from "../../../validation/utils";
 import ActionButton from "../../../views/buttons/action-button";
+import HideAndShowButton from "../../../views/buttons/hide-show-button";
 import { StyledStack, StyledFormContainer, StyledTextfield } from "../styles";
 import { SignupFormField } from "../types";
 import { authChangeHandler } from "../utils";
-import { signupValidations } from "../validation";
+import { passwordMatchValidation, signupValidations } from "../validation";
 import AuthHeader from "./auth-header";
 
 export default function SignupView() {
@@ -24,27 +27,34 @@ export default function SignupView() {
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
 
-  const { email, firstName, lastName, password, passwordConfirm, dob } =
-    useReactiveVar(signupVar);
+  const { email, firstName, lastName, password, passwordConfirm, dob } = useReactiveVar(signupVar);
   const [loading, setLoading] = useState(false);
+  const [touched, setTouched] = useState({ password: false, passwordConfirm: false });
+  const [isPasswordVisible, setPasswordVisible] = useState(false);
+  const [isPasswordConfirmVisible, setPasswordConfirmVisible] = useState(false);
 
-  const dateHelper = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = today.getMonth();
-    const day = today.getDate();
-    return [year, month, day];
-  };
+  useEffect(() => {
+    const onRouteChangeComplete = () => {
+      signupVar(signupInit);
+    };
+
+    router.events.on("routeChangeComplete", onRouteChangeComplete);
+
+    return () => {
+      router.events.off("routeChangeComplete", onRouteChangeComplete);
+    };
+  }, []);
 
   /**
    * Given the number of years specified, we add or remove it from a provided date
    * By default, date is set to current date
    */
-  const numYearsFromDate = (yearsToSubtract: number, d = new Date()) => {
-    const year = d.getFullYear() + yearsToSubtract;
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+  const numYearsFromDate = (yearsToSubtract: number, date = new Date()) => {
+    const year = date.getFullYear() + yearsToSubtract;
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const result = `${year}-${month}-${day}`;
+    return result;
   };
 
   /**
@@ -62,32 +72,45 @@ export default function SignupView() {
 
     setLoading(true);
 
+    if (
+      !validateAllFields(signupFieldNames, signupVar, signupValidations) ||
+      !validateAllFields(passwordFieldNames, signupVar, passwordMatchValidation)
+    ) {
+      setLoading(false);
+      return;
+    }
+
     postSignup(payload)
       .then((res) => {
         if (res.data != null) {
           setLoading(false);
-          enqueueSnackbar(
-            <div style={{ width: "600px" }}>
-              {copy["page.signup.snackbar.success"]}
-            </div>,
-            {
-              variant: "success",
-              autoHideDuration: 4000,
-              onClose: () => {
-                router.replace("/login");
-              },
-              anchorOrigin: {
-                vertical: "top",
-                horizontal: "center",
-              },
-            }
-          );
+          let message = authSuccess.SIGNUP_COMPLETE;
+          let variant: VariantType = "success";
+
+          if (res.data.error) {
+            message = res.data.error;
+            // if (message === "EMAIL_NOT_VERIFIED") {
+            //   variant = "warning";
+            // }
+          }
+
+          enqueueSnackbar(copy[authSuccess[message]], {
+            variant,
+            autoHideDuration: 4000,
+            onClose: () => {
+              router.replace("/login");
+            },
+            anchorOrigin: {
+              vertical: "top",
+              horizontal: "center",
+            },
+          });
         }
       })
-      .catch((e: { message: string; status: number }) => {
+      .catch((e: string) => {
         setLoading(false);
         enqueueSnackbar(
-          copy[AuthErrors[e.message] || AuthErrors.GENERIC],
+          copy[authErrors[e] || authErrors.GENERIC],
           getSnackbarOptions({ variant: "error", duration: 2000 })
         );
       });
@@ -116,14 +139,20 @@ export default function SignupView() {
    */
   const handleInputBlur = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>,
-    fieldName: SignupFormField
+    fieldName: SignupFormField,
+    dependent?: string
   ) => {
+    if (!touched[fieldName as "password" | "passwordConfirm"]) {
+      setTouched({ ...touched, [fieldName]: true });
+    }
+
     authChangeHandler({
       model: signupVar,
       fieldName,
       value: e.target.value || "",
       validate: true,
       validationObject: signupValidations,
+      dependent,
     });
   };
 
@@ -187,22 +216,38 @@ export default function SignupView() {
           <StyledTextfield
             InputLabelProps={{ shrink: true, required: true }}
             label={copy[`${labelPrefix}.password`]}
-            type="password"
+            type={isPasswordVisible ? "text" : "password"}
             value={password.value}
             onChange={(e) => handleInputChange(e, "password")}
-            onBlur={(e) => handleInputBlur(e, "password")}
+            onBlur={(e) => handleInputBlur(e, "password", touched.password ? "passwordConfirm.signup" : undefined)}
             error={password.error.length ? true : false}
             helperText={copy[password.error]}
+            InputProps={{
+              endAdornment: (
+                <HideAndShowButton
+                  setIsVisible={(isVisible) => setPasswordVisible(isVisible)}
+                  isVisible={isPasswordVisible}
+                />
+              ),
+            }}
           />
           <StyledTextfield
             InputLabelProps={{ shrink: true, required: true }}
             label={copy[`${labelPrefix}.passwordConfirm`]}
-            type="password"
+            type={isPasswordConfirmVisible ? "text" : "password"}
             value={passwordConfirm.value}
             onChange={(e) => handleInputChange(e, "passwordConfirm")}
-            onBlur={(e) => handleInputBlur(e, "passwordConfirm")}
+            onBlur={(e) => handleInputBlur(e, "passwordConfirm", touched.password ? "password.signup" : undefined)}
             error={passwordConfirm.error.length ? true : false}
             helperText={copy[passwordConfirm.error]}
+            InputProps={{
+              endAdornment: (
+                <HideAndShowButton
+                  setIsVisible={(isVisible) => setPasswordConfirmVisible(isVisible)}
+                  isVisible={isPasswordConfirmVisible}
+                />
+              ),
+            }}
           />
           <Divider />
           <ActionButton onClick={handleSignup}>

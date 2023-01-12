@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { StyledStack } from "../src/components/auth/styles";
-import AuthHeader from "../src/components/auth/auth-header";
+import AuthHeader from "../src/components/auth/views/auth-header";
 import useCopy from "../src/hooks/useCopy";
 import { postActivateAccount } from "../src/services/auth/auth";
 import { ActivatePayload } from "../src/services/auth/type";
@@ -12,6 +12,7 @@ import InfoPaper from "../src/views/containers/info-paper";
 import { Button, CircularProgress, Divider, Typography } from "@mui/material";
 import ActionButton from "../src/views/buttons/action-button";
 import { Box } from "@mui/system";
+import { activateAccountMessages } from "../constants/auth";
 
 export default function ActivatePage() {
   const router = useRouter();
@@ -35,7 +36,7 @@ export default function ActivatePage() {
           if (response?.data?.userid != null) {
             setSuccess(true);
             enqueueSnackbar(
-              copy[`page.activate.snackbar.success`],
+              copy[activateAccountMessages.SUCCESS],
               getSnackbarOptions({
                 variant: "success",
                 duration: 2000,
@@ -44,12 +45,11 @@ export default function ActivatePage() {
             );
           }
         })
-        .catch((e) => {
-          const { message } = e;
+        .catch((eMsg) => {
           setLoading(false);
           setSuccess(false);
           enqueueSnackbar(
-            copy[`all.errors.${message || "generic"}`],
+            copy[activateAccountMessages[eMsg] || "GENERIC"],
             getSnackbarOptions({ variant: "error", duration: 2000 })
           );
         });
@@ -63,15 +63,11 @@ export default function ActivatePage() {
       <StyledStack>
         <AuthHeader title="activate" />
         <InfoPaper fullHeight>
-          {loading || !isSuccess ? (
+          {loading || isSuccess === null ? (
             <CircularProgress />
           ) : (
             <>
-              <Typography>
-                {isSuccess
-                  ? copy["page.activate.success"]
-                  : copy["page.activate.failure"]}
-              </Typography>
+              <Typography>{isSuccess ? copy["page.activate.success"] : copy["page.activate.failure"]}</Typography>
               {!isSuccess && (
                 <>
                   <Divider />
