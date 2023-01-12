@@ -32,7 +32,6 @@ export default function ButtonDropdown({
   ) => {
     if (menuId === "user_logout") {
       const logoff = await signOut({ callbackUrl: "/login" });
-      console.log(logoff);
     }
   };
 

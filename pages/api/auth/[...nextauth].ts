@@ -19,7 +19,7 @@ export default NextAuth({
         try {
           const response = await postLogin({ email, password });
           if (response?.data != null) {
-            const { email, firstName, lastName, token, userId } = response.data;
+            const { email, token, userId } = response.data;
             return {
               email,
               id: userId,
@@ -28,7 +28,7 @@ export default NextAuth({
             };
           }
         } catch (e) {
-          throw e;
+          throw new Error(e as string);
         }
         return null;
       },

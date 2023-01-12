@@ -1,4 +1,10 @@
 import { ApolloModelVars } from "../apollo-client/types/models";
+import {
+  ILoginValidation,
+  ISignupValidation,
+  LoginFormField,
+  SignupFormField,
+} from "../components/auth/types";
 
 /**
  * Each validator provides a rule. This defines the arguments of that rule
@@ -26,7 +32,7 @@ export interface IValidator {
  */
 export interface IValidatedField {
   validators: IValidator[];
-  fieldDependentValidators?: IValidator[];
+  fieldDependentValidators?: { validators: IValidator[] };
 }
 
 /**
@@ -34,10 +40,12 @@ export interface IValidatedField {
  */
 export interface EventHandlerProps {
   model: ApolloModelVars;
-  fieldName: string;
+  fieldName: LoginFormField | SignupFormField | string;
   value?: string | boolean | number | string[];
   validate?: boolean;
   regex?: RegExp;
+  validationObject: any;
+  dependent?: string;
 }
 
 /**

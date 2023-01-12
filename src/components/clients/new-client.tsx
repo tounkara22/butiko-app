@@ -54,8 +54,6 @@ export default function NewClient() {
       clientsVar().allClients.push(newClient);
       addNewClient(newClient);
       router.push("/clients");
-    } else {
-      console.log("A unique displayName is required");
     }
   };
 

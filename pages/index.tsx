@@ -16,7 +16,6 @@ export default function HomePage() {
 
         postUser(userid)
           .then((response) => {
-            console.log(currentProfileId);
             const userObj = response?.data;
             if (!userObj) {
               signOut({ callbackUrl: "/login" });
